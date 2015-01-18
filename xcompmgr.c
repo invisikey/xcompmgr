@@ -138,6 +138,7 @@ static Atom		winTypeAtom;
 static Atom		winDesktopAtom;
 static Atom		winDockAtom;
 static Atom		winToolbarAtom;
+static Atom		winTooltipAtom;
 static Atom		winMenuAtom;
 static Atom		winUtilAtom;
 static Atom		winSplashAtom;
@@ -174,6 +175,9 @@ typedef enum _compMode {
 
 static void
 determine_mode(Display *dpy, win *w);
+
+static Atom
+determine_wintype (Display *dpy, Window w);
 
 static double
 get_opacity_percent(Display *dpy, win *w, double def);
@@ -912,6 +916,7 @@ paint_all (Display *dpy, XserverRegion region)
 {
     win	*w;
     win	*t = NULL;
+    int layer;
 
     if (!region)
     {
@@ -944,8 +949,11 @@ paint_all (Display *dpy, XserverRegion region)
 #if DEBUG_REPAINT
     printf ("paint:");
 #endif
+    for (layer = 0; layer <= 1; layer++) /* TODO: reindent the loop */
     for (w = list; w; w = w->next)
     {
+	if (layer ^ w->windowType != winTooltipAtom)
+	    continue;
 #if CAN_DO_USABLE
 	if (!w->usable)
 	    continue;
@@ -2188,6 +2196,7 @@ main (int argc, char **argv)
     winDesktopAtom = XInternAtom (dpy, "_NET_WM_WINDOW_TYPE_DESKTOP", False);
     winDockAtom = XInternAtom (dpy, "_NET_WM_WINDOW_TYPE_DOCK", False);
     winToolbarAtom = XInternAtom (dpy, "_NET_WM_WINDOW_TYPE_TOOLBAR", False);
+    winTooltipAtom = XInternAtom (dpy, "_NET_WM_WINDOW_TYPE_TOOLTIP", False);
     winMenuAtom = XInternAtom (dpy, "_NET_WM_WINDOW_TYPE_MENU", False);
     winUtilAtom = XInternAtom (dpy, "_NET_WM_WINDOW_TYPE_UTILITY", False);
     winSplashAtom = XInternAtom (dpy, "_NET_WM_WINDOW_TYPE_SPLASH", False);
