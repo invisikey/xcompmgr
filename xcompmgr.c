@@ -1200,6 +1200,9 @@ map_win (Display *dpy, Window id, unsigned long sequence, Bool fade)
     w->opacity = get_opacity_prop (dpy, w, OPAQUE);
     determine_mode (dpy, w);
 
+    /* might not be set on creation */
+    w->windowType = determine_wintype (dpy, w->id);
+
 #if CAN_DO_USABLE
     w->damage_bounds.x = w->damage_bounds.y = 0;
     w->damage_bounds.width = w->damage_bounds.height = 0;
